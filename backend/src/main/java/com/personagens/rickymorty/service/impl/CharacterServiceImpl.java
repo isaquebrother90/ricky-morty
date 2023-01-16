@@ -3,6 +3,7 @@ package com.personagens.rickymorty.service.impl;
 import com.personagens.rickymorty.dto.external.CharacterClientResponseDTO;
 import com.personagens.rickymorty.dto.external.characters.CharactersApiResponse;
 import com.personagens.rickymorty.dto.external.episodes.EpisodesApiResponse;
+import com.personagens.rickymorty.exception.ContentTypeException;
 import com.personagens.rickymorty.repository.CharacterRepository;
 import com.personagens.rickymorty.repository.EpisodeRepository;
 import com.personagens.rickymorty.service.CharacterService;
@@ -11,6 +12,7 @@ import com.personagens.rickymorty.entity.CharacterEntity;
 import com.personagens.rickymorty.entity.EpisodeEntity;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -40,11 +42,13 @@ public class CharacterServiceImpl implements CharacterService {
         this.modelMapper = modelMapper;
     }
 
+    @Cacheable("character-save")
     @Override
     public CharacterEntity saveCharacter(CharacterEntity characterEntity) {
         return characterRepository.save(characterEntity);
     }
 
+    @Cacheable("episode-save")
     @Override
     public EpisodeEntity saveEpisode(EpisodeEntity episodeEntity) {
         return episodeRepository.save(episodeEntity);
@@ -100,6 +104,8 @@ public class CharacterServiceImpl implements CharacterService {
 
     @Override
     public CharacterClientResponseDTO searchByName(String nameToConvert) {
+        if (nameToConvert.equals("-")) throw new ContentTypeException("Unknown name filter. Use a valid filter.");
+
         log.info("Character required: {} - Class: {}", nameToConvert, CharacterClientResponseDTO.class.getSimpleName());
         Long start = System.currentTimeMillis();
         log.info("Starting process to list all character with episodes - Start: {}", start);
