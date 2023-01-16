@@ -1,6 +1,6 @@
 package com.personagens.rickymorty.controller;
 
-import com.personagens.rickymorty.dto.CharacterResponseDTO;
+import com.personagens.rickymorty.dto.external.CharacterClientResponseDTO;
 import com.personagens.rickymorty.service.impl.CharacterServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,21 +12,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/characters")
-public class CharacterController {
+public class RickyMortyController {
     private CharacterServiceImpl characterServiceImpl;
 
-    public CharacterController(CharacterServiceImpl characterServiceImpl) {
+    public RickyMortyController(CharacterServiceImpl characterServiceImpl) {
         this.characterServiceImpl = characterServiceImpl;
     }
 
     @GetMapping
-    public ResponseEntity<List<CharacterResponseDTO>> listAll(){
+    public ResponseEntity<List<CharacterClientResponseDTO>> listAll() {
         return ResponseEntity.ok(characterServiceImpl.listAll());
     }
 
-    //Quando quiser filtrar por algum nome, basta colocar barra e o nome.
     @GetMapping("/{name}")
-    public ResponseEntity<CharacterResponseDTO> searchByName(@PathVariable("name") String name){
+    public ResponseEntity<CharacterClientResponseDTO> searchByName(@PathVariable("name") String name) {
         return ResponseEntity.ok(characterServiceImpl.searchByName(name));
     }
 }

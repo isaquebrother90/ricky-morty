@@ -1,7 +1,7 @@
 package com.personagens.rickymorty;
 
-import entity.CharacterEntity;
-import entity.EpisodeEntity;
+import com.personagens.rickymorty.entity.CharacterEntity;
+import com.personagens.rickymorty.entity.EpisodeEntity;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
