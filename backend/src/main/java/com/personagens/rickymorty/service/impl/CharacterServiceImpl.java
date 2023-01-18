@@ -1,23 +1,23 @@
 package com.personagens.rickymorty.service.impl;
 
-import com.personagens.rickymorty.dto.external.CharacterClientResponseDTO;
-import com.personagens.rickymorty.dto.external.characters.CharactersApiResponse;
-import com.personagens.rickymorty.dto.external.episodes.EpisodesApiResponse;
+import com.personagens.rickymorty.dto.CharacterClientResponseDTO;
+import com.personagens.rickymorty.dto.characters.CharactersApiResponse;
+import com.personagens.rickymorty.dto.characters.Results;
+import com.personagens.rickymorty.dto.episodes.EpisodesApiResponse;
+import com.personagens.rickymorty.entity.CharacterEntity;
+import com.personagens.rickymorty.entity.EpisodeEntity;
 import com.personagens.rickymorty.exception.ContentTypeException;
 import com.personagens.rickymorty.repository.CharacterRepository;
 import com.personagens.rickymorty.repository.EpisodeRepository;
 import com.personagens.rickymorty.service.CharacterService;
 import com.personagens.rickymorty.utils.CharacterAlias;
-import com.personagens.rickymorty.entity.CharacterEntity;
-import com.personagens.rickymorty.entity.EpisodeEntity;
 import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,30 +25,25 @@ import java.util.stream.Collectors;
 
 @Log4j2
 @Service
+@Transactional
 public class CharacterServiceImpl implements CharacterService {
 
     private CharacterRepository characterRepository;
 
     private EpisodeRepository episodeRepository;
 
-    private ModelMapper modelMapper;
-
     private final String BASEURL = "https://rickandmortyapi.com/api";
 
-    public CharacterServiceImpl(CharacterRepository characterRepository, EpisodeRepository episodeRepository,
-                                ModelMapper modelMapper) {
+    public CharacterServiceImpl(CharacterRepository characterRepository, EpisodeRepository episodeRepository) {
         this.characterRepository = characterRepository;
         this.episodeRepository = episodeRepository;
-        this.modelMapper = modelMapper;
     }
 
-    @Cacheable("character-save")
     @Override
     public CharacterEntity saveCharacter(CharacterEntity characterEntity) {
         return characterRepository.save(characterEntity);
     }
 
-    @Cacheable("episode-save")
     @Override
     public EpisodeEntity saveEpisode(EpisodeEntity episodeEntity) {
         return episodeRepository.save(episodeEntity);
@@ -59,43 +54,62 @@ public class CharacterServiceImpl implements CharacterService {
         Long startListAllExecution = System.currentTimeMillis();
         log.info("Starting process to list all character with episodes - Start: {}", startListAllExecution);
         List<CharacterEntity> findCharacter = characterRepository.findAll();
-        List<EpisodeEntity> findEpisode = episodeRepository.findAll();
+
         if (!findCharacter.isEmpty()) {
-            for (CharacterEntity c : findCharacter) {
-                c.setEpisode(findEpisode);
-                saveCharacter(c);
-            }
             log.info("End of process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
             return toCharacterClientResponseDTO(findCharacter);
 
         } else {
             CharactersApiResponse allCharacters = searchCharactersInRickyAndMortyApi();
-            EpisodesApiResponse allEpisodes = searchEpisodesInRickAndMortyApi();
+            String url = BASEURL + "/episode";
 
-            List<String> characterEpisodesList = new ArrayList<>();
-            characterEpisodesList.addAll(allCharacters.getResults().get(0).getEpisode());//characterRepository.findAll().get(0).getEpisode());
+            for (Results rt : allCharacters.getResults()) {
+                RestTemplate restTemplate = new RestTemplate();
+                searchEpisodesInRickAndMortyApi();
+                List<EpisodeEntity> listEpisodes = new ArrayList<>();
 
-            //Save episode
-            List<EpisodeEntity> episodeEntity = allEpisodes.responseToEntity();
-            Long startSaveEpisodesExecution = System.currentTimeMillis();
-            log.info("Starting process to save the episode {} - Date and time: {}",
-                    episodeEntity.get(0).getName(), startSaveEpisodesExecution);
-            for (EpisodeEntity e : episodeEntity) {
-                saveEpisode(e);
+                for (String internUrl : rt.getEpisode()) {
+                    String urlEpisode = internUrl;
+                    ResponseEntity<com.personagens.rickymorty.dto.episodes.Results> response = restTemplate.exchange(urlEpisode, HttpMethod.GET, null, com.personagens.rickymorty.dto.episodes.Results.class);
+                    com.personagens.rickymorty.dto.episodes.Results episodeData = response.getBody();
+
+                    EpisodeEntity episodeEntity = new EpisodeEntity();
+                    episodeEntity.setName(episodeData.getName());
+                    episodeEntity.setAirDate("Teste"/*episodeData.getAirDate()*/);
+                    episodeEntity.setEpisode(episodeData.getEpisode());
+                    episodeEntity.setUrl(episodeData.getUrl());
+                    episodeEntity.setCreated(episodeData.getCreated());
+
+                    listEpisodes.add(episodeEntity);
+                    Long startSaveEpisodesExecution = System.currentTimeMillis();
+                    log.info("Starting process to save the episode {} - Date and time: {}",
+                            episodeEntity.getName(), startSaveEpisodesExecution);
+
+                    if (episodeRepository.findById(episodeData.getId()).isEmpty()) {
+                        saveEpisode(episodeEntity);
+                    }
+
+                    log.info("End of save episodes process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveEpisodesExecution);
+
+                    CharacterEntity characterEntity = CharacterEntity.builder()
+                            .name(rt.getName())
+                            .status(rt.getStatus())
+                            .url(rt.getUrl())
+                            .created(rt.getCreated())
+                            .build();
+
+                    characterEntity.setEpisode(listEpisodes);
+
+                    Long startSaveCharactersExecution = System.currentTimeMillis();
+                    log.info("Starting process to save the episode {} - Date and time: {}",
+                            episodeEntity.getName(), startSaveCharactersExecution);
+
+                    saveCharacter(characterEntity);
+
+                    log.info("End of save characters process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveCharactersExecution);
+
+                }
             }
-            log.info("End of save episodes process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveEpisodesExecution);
-
-
-            //Save character
-            List<CharacterEntity> characterEntity = allCharacters.responseToEntity(allEpisodes.getResults().get(0)/*episodeEntity*/);
-            Long startSaveCharactersExecution = System.currentTimeMillis();
-            log.info("Starting process to save the episode {} - Date and time: {}",
-                    episodeEntity.get(0).getName(), startSaveCharactersExecution);
-            for (CharacterEntity c : characterEntity) {
-                c.setEpisode(episodeEntity);
-                saveCharacter(c);
-            }
-            log.info("End of save characters process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveCharactersExecution);
 
             log.info("End of list all process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
             return toCharacterClientResponseDTO(characterRepository.findAll());
@@ -153,15 +167,23 @@ public class CharacterServiceImpl implements CharacterService {
         return episodesData;
     }
 
-    //Mappers
-    private CharacterEntity toCharacterEntity(Optional<CharacterEntity> characterEntity) {
-        CharacterEntity entity = characterEntity.get();
-        return entity;
-    }
-
+    //Mapper to response client.
     private List<CharacterClientResponseDTO> toCharacterClientResponseDTO(List<CharacterEntity> characterEntities) {
+
+        List<EpisodeEntity> episodeEntities = episodeRepository.findAll();
+
         return characterEntities.stream()
-                .map(entity -> modelMapper.map(entity, CharacterClientResponseDTO.class))
+                .map(character -> {
+                    CharacterClientResponseDTO clientResponseDTO = new CharacterClientResponseDTO();
+                    clientResponseDTO.setId(character.getId());
+                    clientResponseDTO.setName(character.getName());
+                    clientResponseDTO.setStatus(character.getStatus());
+                    clientResponseDTO.setUrl(character.getUrl());
+                    clientResponseDTO.setCreated(character.getCreated());
+                    clientResponseDTO.setEpisode(episodeEntities);
+                    return clientResponseDTO;
+                })
                 .collect(Collectors.toList());
+
     }
 }

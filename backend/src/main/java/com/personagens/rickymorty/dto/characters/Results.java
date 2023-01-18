@@ -1,4 +1,4 @@
-package com.personagens.rickymorty.dto.external.characters;
+package com.personagens.rickymorty.dto.characters;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Data;
@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Results {
+
     private Integer id;
     private String name;
     private String status;
@@ -20,4 +21,5 @@ public class Results {
     private List<String> episode;
     private String url;
     private String created;
+
 }

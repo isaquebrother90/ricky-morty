@@ -1,5 +1,7 @@
-package com.personagens.rickymorty.dto.external;
+package com.personagens.rickymorty.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.personagens.rickymorty.entity.EpisodeEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -11,5 +13,6 @@ public class CharacterClientResponseDTO {
     private String status;
     private String url;
     private String created;
-    private List<EpisodeClientResponseDTO> episode;
+    @JsonProperty("Episodes")
+    private List<EpisodeEntity> episode;
 }

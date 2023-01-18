@@ -59,6 +59,11 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     {
         return new ArrayList<ResponseMessage>() {{
             add(new ResponseMessageBuilder()
+                    .code(200)
+                    .message("Successfully retrieved character information.")
+                    .responseModel(new ModelRef("Error"))
+                    .build());
+            add(new ResponseMessageBuilder()
                     .code(500)
                     .message("Sorry!An unknown error has occurred")
                     .responseModel(new ModelRef("Error"))

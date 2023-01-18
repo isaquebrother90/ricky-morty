@@ -1,4 +1,4 @@
-package com.personagens.rickymorty.dto.external.episodes;
+package com.personagens.rickymorty.dto.episodes;
 
 import lombok.Data;
 

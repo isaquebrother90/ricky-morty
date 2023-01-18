@@ -1,4 +1,6 @@
 FROM openjdk:17-alpine
-ARG JARFILE=target/*.jar
-COPY ${JARFILE} app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+CMD ["mkdir", "app"]
+WORKDIR app/
+COPY target/*.jar app/rickmorty.jar
+EXPOSE 8082
+CMD ["java", "-jar", "app/rickmorty.jar"]

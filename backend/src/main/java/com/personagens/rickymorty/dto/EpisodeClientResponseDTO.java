@@ -1,4 +1,4 @@
-package com.personagens.rickymorty.dto.external;
+package com.personagens.rickymorty.dto;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
 package com.personagens.rickymorty.controller;
 
-import com.personagens.rickymorty.dto.external.CharacterClientResponseDTO;
+import com.personagens.rickymorty.dto.CharacterClientResponseDTO;
 import com.personagens.rickymorty.service.impl.CharacterServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,7 +26,7 @@ public class RickyMortyController {
     @Cacheable("characters")
     @ApiOperation(value = "Get all characters")
     @GetMapping
-    public ResponseEntity<List<CharacterClientResponseDTO>> listAll() {
+    public ResponseEntity<List<CharacterClientResponseDTO>> listAllCharacter() {
         return ResponseEntity.ok(characterServiceImpl.listAll());
     }
 
