@@ -1,8 +1,8 @@
 ## Caminhos para utilizar essa aplicação
 
-**### Sobre o backend**
+### Sobre o backend
 
-**### 1- Spring Boot**
+### 1- Spring Boot
 
 - Clone o repositório
 - Importe o projeto como maven na sua IDE de preferência
@@ -11,7 +11,7 @@
 - Alguma ferramenta para teste como Postman, Insomnia e outras
 - Para verificar se os testes passam, pode utilizar o comando `mvn test`
 
-**### Docker**
+### Docker
 
 - Clone o repositório
 - Importar o projeto como maven na sua IDE de preferência
@@ -25,7 +25,7 @@
   `docker run -d -it --network app_network -e MYSQL_ROOT_PASSWORD=root -e  MYSQL_DATABASE=rickmorty --name mysql_name mysql`
 * Talvez seja necessário mudar a property de datasource em application.properties, caso não localize o banco. Há uma outra opção presente lá, é só descomentar e utilizar.
 
-**### Swagger-ui**
+### Swagger-ui
 
 - Com a aplicação rodando, acesse (http://localhost:8080/swagger-ui.html) para testar os endpoints.
 
