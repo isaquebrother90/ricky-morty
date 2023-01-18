@@ -154,7 +154,7 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     public EpisodesApiResponse searchEpisodesInRickAndMortyApi() {
-        String url = BASEURL + "/episode";
+        String url = "https://rickandmortyapi.com/api" + "/episode";
         RestTemplate restTemplate = new RestTemplate();
 
         Long start = System.currentTimeMillis();
