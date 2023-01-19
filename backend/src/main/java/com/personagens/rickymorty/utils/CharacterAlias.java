@@ -5,7 +5,7 @@ public class CharacterAlias {
         String corretName = "-";
 
         if (name.matches("(?i)(rick|ric)")) corretName = "Rick Sanchez";
-        if (name.matches("(?i)(mort|morti)")) corretName = "Morty";
+        if (name.matches("(?i)(mort|morti)")) corretName = "Morty Smith";
         if (name.matches("(?i)(sum|summer)")) corretName = "Summer Smith";
 
         return corretName;

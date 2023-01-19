@@ -8,7 +8,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "tb_episode")
+@Table(name = "tb_episode", uniqueConstraints={@UniqueConstraint(columnNames={"id", "name", "air_date", "episode",
+                                                                              "url", "created", "tb_episode_id"})})
 @Builder
 public class EpisodeEntity implements Serializable {
     private static final long serialVersionUID = 6027770984914382242L;

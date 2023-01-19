@@ -40,13 +40,6 @@ public class CharacterServiceImpl implements CharacterService {
         this.episodeRepository = episodeRepository;
     }
 
-    /*public Page<RepositorioEntity> getAllPageable(RepositorioEntity filter, Pageable pageable) {
-        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues().withIgnoreCase()
-                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
-        Example<RepositorioEntity> example = Example.of(filter, matcher);
-        return repository.findAll(pageable);
-    }*/
-
     @Override
     public CharacterEntity saveCharacter(CharacterEntity characterEntity) {
         return characterRepository.save(characterEntity);
@@ -62,7 +55,7 @@ public class CharacterServiceImpl implements CharacterService {
         Long startListAllExecution = System.currentTimeMillis();
         log.info("Starting process to list all character with episodes - Start: {}", startListAllExecution);
         List<CharacterEntity> findCharacter = new ArrayList<>();
-        findCharacter.addAll((Collection<? extends CharacterEntity>) characterRepository.findAll());
+        findCharacter.addAll(characterRepository.findAll());
 
         if (!findCharacter.isEmpty()) {
             log.info("End of process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
@@ -77,14 +70,15 @@ public class CharacterServiceImpl implements CharacterService {
                 searchEpisodesInRickAndMortyApi();
                 List<EpisodeEntity> listEpisodes = new ArrayList<>();
 
+                EpisodeEntity episodeEntity = new EpisodeEntity();
                 for (String internUrl : rt.getEpisode()) {
                     String urlEpisode = internUrl;
                     ResponseEntity<com.personagens.rickymorty.dto.episodes.Results> response = restTemplate.exchange(urlEpisode, HttpMethod.GET, null, com.personagens.rickymorty.dto.episodes.Results.class);
                     com.personagens.rickymorty.dto.episodes.Results episodeData = response.getBody();
 
-                    EpisodeEntity episodeEntity = new EpisodeEntity();
+
                     episodeEntity.setName(episodeData.getName());
-                    episodeEntity.setAirDate("Teste"/*episodeData.getAirDate()*/);
+                    episodeEntity.setAirDate(episodeData.getAirDate());
                     episodeEntity.setEpisode(episodeData.getEpisode());
                     episodeEntity.setUrl(episodeData.getUrl());
                     episodeEntity.setCreated(episodeData.getCreated());
@@ -100,24 +94,25 @@ public class CharacterServiceImpl implements CharacterService {
 
                     log.info("End of save episodes process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveEpisodesExecution);
 
-                    CharacterEntity characterEntity = CharacterEntity.builder()
-                            .name(rt.getName())
-                            .status(rt.getStatus())
-                            .url(rt.getUrl())
-                            .created(rt.getCreated())
-                            .build();
-
-                    characterEntity.setEpisode(listEpisodes);
-
-                    Long startSaveCharactersExecution = System.currentTimeMillis();
-                    log.info("Starting process to save the episode {} - Date and time: {}",
-                            episodeEntity.getName(), startSaveCharactersExecution);
-
-                    saveCharacter(characterEntity);
-
-                    log.info("End of save characters process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveCharactersExecution);
 
                 }
+                CharacterEntity characterEntity = CharacterEntity.builder()
+                        .name(rt.getName())
+                        .status(rt.getStatus())
+                        .url(rt.getUrl())
+                        .created(rt.getCreated())
+                        .build();
+
+                characterEntity.setEpisode(listEpisodes);
+
+                Long startSaveCharactersExecution = System.currentTimeMillis();
+                log.info("Starting process to save the character {} - Date and time: {}",
+                        episodeEntity.getName(), startSaveCharactersExecution);
+
+                saveCharacter(characterEntity);
+
+                log.info("End of save characters process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startSaveCharactersExecution);
+
             }
 
             log.info("End of list all process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
