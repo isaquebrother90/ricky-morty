@@ -208,11 +208,12 @@ Rode `ng build` para construir o projeto. Os artefatos de compilação serão ar
 
 ## Algumas características e funcionalidades da API
 - Busca personagens na API do Rick and Morty e os registra no banco de dados MYSQL
-- Busca episódios na API do Rick and Mkrty e os registra no banco de dados MYSQL
+- Busca episódios na API do Rick and Morty e os registra no banco de dados MYSQL
 - Utiliza padrões de design como Builder, Repository
 - Utiliza cache nos seus controllers
 - Captura detalhada de logs nos principais processos da aplicação
-- Configuração de logs com log4j2
+- Configuração de logs com log4j2. Abaixo, parte de alguns logs que sao capturados:
+![Alguns logs](image.png)
 
 ## TO DO
 - Paginar back e front e terminar de fazer o front consumir o back e utilizar a interface preparada.
