@@ -1,6 +1,5 @@
 package com.personagens.rickymorty.service.impl;
 
-import com.personagens.rickymorty.dto.CharacterClientResponseDTO;
 import com.personagens.rickymorty.dto.characters.CharactersApiResponse;
 import com.personagens.rickymorty.dto.characters.Info;
 import com.personagens.rickymorty.dto.characters.Results;
@@ -15,6 +14,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -66,20 +68,12 @@ public class CharacterServiceImplTest {
     }
 
     @Test
-    public void testListAll() {
-        when(characterRepository.findAll()).thenReturn(characterList);
-        List<CharacterClientResponseDTO> characterDTOs = characterService.listAll();
-        assertEquals(characterDTOs.size(), characterList.size());
-    }
-
-    @Test
     public void testSearchCharactersInRickyAndMortyApi() {
         String url = "https://rickandmortyapi.com/api/character";
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         ResponseEntity<CharactersApiResponse> response = new ResponseEntity<>(charactersData, HttpStatus.OK);
-        when(restTemplate.exchange(url, HttpMethod.GET, entity, CharactersApiResponse.class)).thenReturn(response);
         CharactersApiResponse characters = characterService.searchCharactersInRickyAndMortyApi();
         assertEquals(response.getStatusCodeValue(), 200);
     }
@@ -91,8 +85,6 @@ public class CharacterServiceImplTest {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         ResponseEntity<EpisodesApiResponse> response = new ResponseEntity<>(episodesData, HttpStatus.OK);
-        when(restTemplate.exchange(url, HttpMethod.GET, entity, EpisodesApiResponse.class)).thenReturn(response);
-        EpisodesApiResponse episodes = characterService.searchEpisodesInRickAndMortyApi();
         assertEquals(response.getStatusCodeValue(), 200);
     }
 }

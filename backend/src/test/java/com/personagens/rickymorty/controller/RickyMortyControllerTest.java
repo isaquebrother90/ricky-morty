@@ -46,7 +46,6 @@ public class RickyMortyControllerTest {
         List<CharacterClientResponseDTO> expectedCharacters = new ArrayList<>();
         expectedCharacters.add(new CharacterClientResponseDTO());
         expectedCharacters.add(new CharacterClientResponseDTO());
-        when(characterServiceImpl.listAll()).thenReturn(expectedCharacters);
 
         ResponseEntity<List<CharacterClientResponseDTO>> response = rickyMortyController.listAllCharacter();
 

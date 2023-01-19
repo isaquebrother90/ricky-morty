@@ -6,13 +6,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin
 @Api(value = "Rick and Morty API")
 @RestController
 @RequestMapping("/api/v1/characters")
@@ -36,4 +34,10 @@ public class RickyMortyController {
     public ResponseEntity<CharacterClientResponseDTO> searchByName(@PathVariable("name") String name) {
         return ResponseEntity.ok(characterServiceImpl.searchByName(name));
     }
+
+    /*@GetMapping("/pageable")
+    ResponseEntity<Page<CharacterClientResponseDTO>> index(CharacterClientResponseDTO filter, @PageableDefault Pageable pageable) {
+        Page<CharacterClientResponseDTO> entities = characterServiceImpl.getAllPageable(filter, pageable);
+        return ResponseEntity.ok(entities);
+    }*/
 }

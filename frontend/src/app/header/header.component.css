@@ -1,0 +1,32 @@
+.navbar {
+  flex-direction: column;
+  overflow: auto;
+}
+.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  font-size: xx-large;
+}
+h1 a {
+  color: white;
+  text-decoration: none;
+}
+.header {
+  background-color: #007899;
+}
+/*Media queries*/
+@media only screen and (max-width: 771px) {
+  .navbar-brand {
+    font-size: x-large;
+ }
+}
+@media only screen and (max-width: 771px) and (max-width: 469px) {
+  .navbar-brand {
+    font-size: larger;
+ }
+}
+@media only screen and (max-width: 771px) and (max-width: 377px) {
+  .navbar-brand {
+    font-size: medium;
+ }
+}

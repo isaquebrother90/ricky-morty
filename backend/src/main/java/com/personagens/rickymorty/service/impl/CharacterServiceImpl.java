@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +40,13 @@ public class CharacterServiceImpl implements CharacterService {
         this.episodeRepository = episodeRepository;
     }
 
+    /*public Page<RepositorioEntity> getAllPageable(RepositorioEntity filter, Pageable pageable) {
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnoreNullValues().withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+        Example<RepositorioEntity> example = Example.of(filter, matcher);
+        return repository.findAll(pageable);
+    }*/
+
     @Override
     public CharacterEntity saveCharacter(CharacterEntity characterEntity) {
         return characterRepository.save(characterEntity);
@@ -53,7 +61,8 @@ public class CharacterServiceImpl implements CharacterService {
     public List<CharacterClientResponseDTO> listAll() {
         Long startListAllExecution = System.currentTimeMillis();
         log.info("Starting process to list all character with episodes - Start: {}", startListAllExecution);
-        List<CharacterEntity> findCharacter = characterRepository.findAll();
+        List<CharacterEntity> findCharacter = new ArrayList<>();
+        findCharacter.addAll((Collection<? extends CharacterEntity>) characterRepository.findAll());
 
         if (!findCharacter.isEmpty()) {
             log.info("End of process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
@@ -112,7 +121,7 @@ public class CharacterServiceImpl implements CharacterService {
             }
 
             log.info("End of list all process: [{}] - Processing time: {}", System.currentTimeMillis(), System.currentTimeMillis() - startListAllExecution);
-            return toCharacterClientResponseDTO(characterRepository.findAll());
+            return toCharacterClientResponseDTO((List<CharacterEntity>) characterRepository.findAll());
         }
     }
 

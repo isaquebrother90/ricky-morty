@@ -1,0 +1,26 @@
+.btn {
+    background-color: #f7c27e;
+    margin-top: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.titulo {
+    display: flex;
+    align-items: center;
+    vertical-align: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    flex-direction: column;
+    font-size: larger;
+}
+
+img {
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 469px) {
+    .titulo {
+        font-size: medium;
+        flex-wrap: wrap;
+    }
+} 

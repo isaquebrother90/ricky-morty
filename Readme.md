@@ -2,7 +2,7 @@
 
 ### Sobre o backend
 
-### 1- Spring Boot
+### Spring Boot
 
 - Clone o repositório
 - Importe o projeto como maven na sua IDE de preferência
@@ -192,3 +192,19 @@
   }
 }
 ```
+
+## Sobre o frontend
+
+Este projeto foi gerado com [Angular CLI](https://github.com/angular/angular-cli) version 15.0.0.
+
+### Servidor
+
+Rode o comando `ng serve` para subir um servidor de desenvolvimento. Navegue até `http://localhost:4200/`. O aplicativo será recarregado automaticamente se você alterar qualquer um dos arquivos de origem.
+
+### Build
+
+Rode `ng build` para construir o projeto. Os artefatos de compilação serão armazenados no diretório `dist/`.
+
+
+## TO DO
+- Pginar back e front e terminar de azer o front consumir o back e utilizar a interface preparada.
