@@ -206,5 +206,14 @@ Rode o comando `ng serve` para subir um servidor de desenvolvimento. Navegue at�
 Rode `ng build` para construir o projeto. Os artefatos de compilação serão armazenados no diretório `dist/`.
 
 
+## Algumas características e funcionalidades da API
+- Busca personagens na API do Rick and Morty e os registra no banco de dados MYSQL
+- Busca episódios na API do Rick and Mkrty e os registra no banco de dados MYSQL
+- Utiliza padrões de design como Builder, Repository
+- Utiliza cache nos seus controllers
+- Captura detalhada de logs nos principais processos da aplicação
+- Configuração de logs com log4j2
+
 ## TO DO
-- Pginar back e front e terminar de azer o front consumir o back e utilizar a interface preparada.
+- Paginar back e front e terminar de fazer o front consumir o back e utilizar a interface preparada.
+- Agendar atualização diária da base de dados de personagens e episódios
